@@ -7,7 +7,7 @@ def computeNoisePower(BW, noiseFiguredB):
     noiseFigure = 10 ** (noiseFiguredB / 10)
     return BW * Boltzmann * T0 * noiseFigure
 
-def scatterPlot(signal,xLimits=None,yLimits=None):
+def scatterPlot(signal,xLimits=None,yLimits=None,title=None):
     real = np.real(signal)
     imag = np.imag(signal)
 
@@ -20,6 +20,7 @@ def scatterPlot(signal,xLimits=None,yLimits=None):
 
     plt.xlabel('Q')
     plt.ylabel('I')
+    plt.title(title)
     plt.show()
 
 # === Convert an array of integers to a 2D array of binary Strings === #
@@ -139,11 +140,20 @@ def crcDecoder(dividend, divisor):
                 return 0
 
 
-def QPSK(data):
+def modQPSK(data):
     # Reshape data
     data = np.reshape(data, (2, -1))
     symbols = 1.0 - 2.0 * data
     return np.sqrt(0.5) * (symbols[0, :] + 1j * symbols[1, :])
+
+def demQPSK(symbols):
+    # Reshape data
+    data = np.zeros(len(symbols) * 2)
+    realPart = (np.real(symbols) < 0 ) * 1
+    imagPart = (np.imag(symbols) < 0) * 1
+    data[0:len(symbols)] = realPart
+    data[len(symbols)::] = imagPart
+    return data
 
 def LMMSE(y, A, Qx, Qn):
     '''
